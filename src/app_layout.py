@@ -15,11 +15,61 @@ class AppLayout(ft.Row):
             on_click=self.toggle_nav_rail,
         )
         self.sidebar = Sidebar(self, page)
-        self._active_view: ft.Control = ft.Column(
-            controls=[ft.Text("Active View")],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        self.members_view = ft.Text("members view")
+
+        self.all_boards_view = ft.Column([
+                ft.Row(
+                    [
+                        ft.Container(
+                            ft.Text(
+                                value="Your Boards",
+                                theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM,
+                            ),
+                            expand=True,
+                            padding=ft.padding.only(top=15),
+                        ),
+                        ft.Container(
+                            ft.TextButton(
+                                "Add new board",
+                                icon=ft.Icons.ADD,
+                                on_click=self.app.add_board,
+                                style=ft.ButtonStyle(
+                                    bgcolor={
+                                        ft.ControlState.DEFAULT: ft.Colors.BLUE_200,
+                                        ft.ControlState.HOVERED: ft.Colors.BLUE_400,
+                                    },
+                                    shape={
+                                        ft.ControlState.DEFAULT: ft.RoundedRectangleBorder(
+                                            radius=3
+                                        )
+                                    },
+                                ),
+                            ),
+                            padding=ft.padding.only(right=50, top=15),
+                        ),
+                    ]
+                ),
+                ft.Row(
+                    [
+                        ft.TextField(
+                            hint_text="Search all boards",
+                            autofocus=False,
+                            content_padding=ft.padding.only(left=10),
+                            width=200,
+                            height=40,
+                            text_size=12,
+                            border_color=ft.Colors.BLACK26,
+                            focused_border_color=ft.Colors.BLUE_ACCENT,
+                            suffix_icon=ft.Icons.SEARCH,
+                        )
+                    ]
+                ),
+                ft.Row([ft.Text("No Boards to Display")]),
+            ],
+            expand=True,
         )
+        self._active_view: ft.Control = self.all_boards_view
+
         self.controls = [self.sidebar, self.toggle_nav_rail_button, self.active_view]
 
     @property
@@ -30,6 +80,59 @@ class AppLayout(ft.Row):
     def active_view(self, view):
         self._active_view = view
         self.update()
+
+    def hydrate_all_boards_view(self):
+        self.all_boards_view.controls[-1] = ft.Row(
+            [
+                ft.Container(
+                    content=ft.Row(
+                        [
+                            ft.Container(
+                                content=ft.Text(value=b.name),
+                                data=b,
+                                expand=True,
+                                on_click=self.board_click,
+                            ),
+                            ft.Container(
+                                content=ft.PopupMenuButton(
+                                    items=[
+                                        ft.PopupMenuItem(
+                                            content=ft.Text(
+                                                value="Delete",
+                                                theme_style=ft.TextThemeStyle.LABEL_MEDIUM,
+                                                text_align=ft.TextAlign.CENTER,
+                                            ),
+                                            on_click=self.app.delete_board,
+                                            data=b,
+                                        ),
+                                        ft.PopupMenuItem(),
+                                        ft.PopupMenuItem(
+                                            content=ft.Text(
+                                                value="Archive",
+                                                theme_style=ft.TextThemeStyle.LABEL_MEDIUM,
+                                                text_align=ft.TextAlign.CENTER,
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                padding=ft.padding.only(right=-10),
+                                border_radius=ft.border_radius.all(3),
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ),
+                    border=ft.border.all(1, ft.Colors.BLACK38),
+                    border_radius=ft.border_radius.all(5),
+                    bgcolor=ft.Colors.WHITE60,
+                    padding=ft.padding.all(10),
+                    width=250,
+                    data=b,
+                )
+                for b in self.store.get_boards()
+            ],
+            wrap=True,
+        )
+        self.sidebar.sync_board_destinations()
 
     def toggle_nav_rail(self, e):
         self.sidebar.visible = not self.sidebar.visible
