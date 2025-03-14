@@ -80,7 +80,13 @@ class AppLayout(ft.Row):
     def active_view(self, view):
         self._active_view = view
         self.update()
-
+        
+    def set_board_view(self, i):
+        self.active_view = self.store.get_boards()[i]
+        self.sidebar.bottom_nav_rail.selected_index = i
+        self.sidebar.top_nav_rail.selected_index = None
+        self.page.update()
+        
     def hydrate_all_boards_view(self):
         self.all_boards_view.controls[-1] = ft.Row(
             [

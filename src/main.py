@@ -1,8 +1,9 @@
 import flet as ft
  
 class TrelloApp:
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page, user=None):
         self.page = page
+        self.page.on_route_change = self.route_change
         self.appbar_items = [
             ft.PopupMenuItem(text="Login"),
             ft.PopupMenuItem(),  # divider
@@ -26,7 +27,36 @@ class TrelloApp:
         )
         self.page.appbar = self.appbar
         self.page.update()
-         
+        
+    def initialize(self):
+        self.page.views.append(
+            ft.View(
+                "/",
+                [self.appbar, self],
+                padding=ft.padding.all(0),
+                bgcolor=ft.Colors.BLUE_GREY_200,
+            )
+        )
+        self.page.update()
+        # create an initial board for demonstration if no boards
+        if len(self.boards) == 0:
+            self.create_new_board("My First Board")
+        self.page.go("/")
+
+    def route_change(self, e):
+        troute = ft.TemplateRoute(self.page.route)
+        if troute.match("/"):
+            self.page.go("/boards")
+        elif troute.match("/board/:id"):
+            if int(troute.id) > len(self.store.get_boards()):
+                self.page.go("/")
+                return
+            self.set_board_view(int(troute.id))
+        elif troute.match("/boards"):
+            self.set_all_boards_view()
+        elif troute.match("/members"):
+            self.set_members_view()
+        self.page.update()
 if __name__ == "__main__":
 
     def main(page: ft.Page):
