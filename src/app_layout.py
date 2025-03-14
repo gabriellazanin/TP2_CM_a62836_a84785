@@ -1,12 +1,16 @@
+from board import Board
+from data_store import DataStore
 import flet as ft
 from sidebar import Sidebar
 
 
 class AppLayout(ft.Row):
-    def __init__(self, app, page: ft.Page, *args, **kwargs):
+    def __init__(self, app, page: ft.Page, store: DataStore, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.app = app
-        self.page = page
+        self.page: ft.Page = page
+        self.page.on_resized = self.page_resize
+        self.store: DataStore = store
         self.toggle_nav_rail_button = ft.IconButton(
             icon=ft.Icons.ARROW_CIRCLE_LEFT,
             icon_color=ft.Colors.BLUE_GREY_400,
@@ -14,10 +18,10 @@ class AppLayout(ft.Row):
             selected_icon=ft.Icons.ARROW_CIRCLE_RIGHT,
             on_click=self.toggle_nav_rail,
         )
-        self.sidebar = Sidebar(self, page)
+        self.sidebar = Sidebar(self, self.store)
         self.members_view = ft.Text("members view")
-
-        self.all_boards_view = ft.Column([
+        self.all_boards_view = ft.Column(
+            [
                 ft.Row(
                     [
                         ft.Container(
@@ -79,12 +83,35 @@ class AppLayout(ft.Row):
     @active_view.setter
     def active_view(self, view):
         self._active_view = view
-        self.update()
-        
+        self.controls[-1] = self._active_view
+        self.sidebar.sync_board_destinations()
+        self.page.update()
+
     def set_board_view(self, i):
         self.active_view = self.store.get_boards()[i]
         self.sidebar.bottom_nav_rail.selected_index = i
         self.sidebar.top_nav_rail.selected_index = None
+        self.page_resize()
+        self.page.update()
+
+    def set_all_boards_view(self):
+        self.active_view = self.all_boards_view
+        self.hydrate_all_boards_view()
+        self.sidebar.top_nav_rail.selected_index = 0
+        self.sidebar.bottom_nav_rail.selected_index = None
+        self.page.update()
+
+    def set_members_view(self):
+        self.active_view = self.members_view
+        self.sidebar.top_nav_rail.selected_index = 1
+        self.sidebar.bottom_nav_rail.selected_index = None
+        self.page.update()
+
+    def page_resize(self, e=None):
+        if type(self.active_view) is Board:
+            self.active_view.resize(
+                self.sidebar.visible, self.page.width, self.page.height
+            )
         self.page.update()
 
     def hydrate_all_boards_view(self):
@@ -140,7 +167,11 @@ class AppLayout(ft.Row):
         )
         self.sidebar.sync_board_destinations()
 
+    def board_click(self, e):
+        self.sidebar.bottom_nav_change(self.store.get_boards().index(e.control.data))
+
     def toggle_nav_rail(self, e):
         self.sidebar.visible = not self.sidebar.visible
         self.toggle_nav_rail_button.selected = not self.toggle_nav_rail_button.selected
+        self.page_resize()
         self.page.update()
