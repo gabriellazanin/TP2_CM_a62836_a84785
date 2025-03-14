@@ -86,7 +86,7 @@ class AppLayout(ft.Row):
         self.sidebar.bottom_nav_rail.selected_index = i
         self.sidebar.top_nav_rail.selected_index = None
         self.page.update()
-        
+
     def hydrate_all_boards_view(self):
         self.all_boards_view.controls[-1] = ft.Row(
             [
