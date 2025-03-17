@@ -265,7 +265,7 @@ class BoardList(ft.Container):
         self.page.update()
 
     def remove_item(self, item: Item):
-        controls_list = [x.controls[1] for x in self.items.controls]
+        controls_list = [x.controls[0] for x in self.items.controls]
         del self.items.controls[controls_list.index(item)]
         self.store.remove_item(self.board_list_id, item.item_id)
         self.view.update()
@@ -275,8 +275,8 @@ class BoardList(ft.Container):
         self.items.controls[controls_list.index(item)].controls[0].opacity = opacity
         self.view.update()
     
-    def update_list_item(self, edited_item_text=None):
+    def update_list_item(self):
+        # self.remove_item(item_id)
         for card in self.store.get_items(self.board_list_id):
             self.items.controls.append(Item(self, self.store, card["text"])) 
-        
         self.update()

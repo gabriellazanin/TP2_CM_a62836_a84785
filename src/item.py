@@ -17,6 +17,7 @@ class Item(ft.Container):
         self.item_text = item_text
         
         self.edit_button = ft.IconButton(ft.Icons.EDIT, on_click=self.edit_card)
+        self.delete_button = ft.IconButton(ft.Icons.DELETE, on_click=self.delete_card)
         
         self.card_item = ft.Card(
             content=ft.Row(
@@ -27,6 +28,7 @@ class Item(ft.Container):
                     ),
                     ft.Row([
                         self.edit_button,
+                        self.delete_button,
                         ],
                         alignment = ft.alignment.center_right,
                     ),
@@ -92,7 +94,7 @@ class Item(ft.Container):
             self.store.update_item(self.list.board_list_id, self.item_id, self.item_text)
             self.card_item.content.controls[0].label = self.item_text
 
-            self.list.update_list_item(self.item_id)
+            self.list.update_list_item()
             self.page.update()
             self.page.close(dialog)
                     
@@ -103,5 +105,10 @@ class Item(ft.Container):
             actions=[ft.TextButton("Save", on_click=save_card)]
         )
         self.page.open(dialog)
+        
+    def delete_card(self, e):
+        self.list.items.controls.remove(self)
+        self.store.remove_item(self.list.board_list_id, self.item_id)
+        self.page.update()
         
             
