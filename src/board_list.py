@@ -276,7 +276,6 @@ class BoardList(ft.Container):
         self.view.update()
     
     def update_list_item(self):
-        self.items.controls.clear() 
         for c in self.store.get_items(self.board_list_id):
             self.items.controls.append(Item(self, self.store, c["text"])) 
         self.update()
