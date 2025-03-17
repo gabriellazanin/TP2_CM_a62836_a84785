@@ -275,8 +275,8 @@ class BoardList(ft.Container):
         self.items.controls[controls_list.index(item)].controls[0].opacity = opacity
         self.view.update()
     
-    def update_list_item(self):
-        for c in self.store.get_items(self.board_list_id):
-            self.items.controls.append(Item(self, self.store, c["text"])) 
-        self.update()
+    def update_list_item(self, edited_item_text=None):
+        for card in self.store.get_items(self.board_list_id):
+            self.items.controls.append(Item(self, self.store, card["text"])) 
         
+        self.update()

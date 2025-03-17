@@ -88,13 +88,14 @@ class Item(ft.Container):
         
     def edit_card(self, e):
         def save_card(e):
-            self.item_text = edit_field.value
-            self.card_item.content.controls[0].label = self.item_text
+            self.item_text = edit_field.value  # Captura o novo texto
             self.store.update_item(self.list.board_list_id, self.item_id, self.item_text)
-            # self.list.update_list_item()
-            self.page.close(dialog)
+            self.card_item.content.controls[0].label = self.item_text
+
+            self.list.update_list_item(self.item_id)
             self.page.update()
-            
+            self.page.close(dialog)
+                    
         edit_field = ft.TextField(value=self.item_text, on_submit=save_card)
         dialog = ft.AlertDialog(
             title=ft.Text("Edit Card"),
