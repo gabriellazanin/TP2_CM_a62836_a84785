@@ -29,6 +29,7 @@ class Item(ft.Container):
             elevation=1,
             data=self.list,
         )
+        self.edit_button = ft.IconButton(ft.Icons.EDIT, on_click=self.edit_card)
         self.view = ft.Draggable(
             group="items",
             content=ft.DragTarget(
@@ -77,3 +78,21 @@ class Item(ft.Container):
         self.list.set_indicator_opacity(self, 0.0)
         self.card_item.elevation = 1
         self.page.update()
+        
+    def edit_card(self, e):
+        def save_card(e):
+            self.item_text = edit_field.value
+            self.text_label.value = self.item_text
+            self.page.close(dialog)
+            self.store.update_item(self.list.board_list_id, self.item_id, self.item_text)
+            self.page.update()
+        
+        edit_field = ft.TextField(value=self.item_text)
+        dialog = ft.AlertDialog(
+            title=ft.Text("Edit Card"),
+            content=edit_field,
+            actions=[ft.TextButton("Save")]
+        )
+        self.page.open(dialog)
+        
+            

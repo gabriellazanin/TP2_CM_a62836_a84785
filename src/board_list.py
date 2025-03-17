@@ -28,7 +28,7 @@ class BoardList(ft.Container):
         self.items = ft.Column([], tight=True, spacing=4)
         self.items.controls = self.store.get_items(self.board_list_id)
         self.new_item_field = ft.TextField(
-            label="new card name",
+            label="New Card Name",
             height=50,
             bgcolor=ft.Colors.WHITE,
             on_submit=self.add_item_handler,
@@ -111,7 +111,7 @@ class BoardList(ft.Container):
                         content=ft.Row(
                             [
                                 ft.Icon(ft.Icons.ADD),
-                                ft.Text("add card", color=ft.Colors.BLACK38),
+                                ft.Text("Add Card", color=ft.Colors.BLACK38),
                             ],
                             tight=True,
                         ),
