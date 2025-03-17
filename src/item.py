@@ -15,13 +15,17 @@ class Item(ft.Container):
         self.store: DataStore = store
         self.list = list
         self.item_text = item_text
+        
+        self.edit_button = ft.IconButton(ft.Icons.EDIT, on_click=self.edit_card)
+        
         self.card_item = ft.Card(
             content=ft.Row(
                 [
                     ft.Container(
                         content=ft.Checkbox(label=f"{self.item_text}", width=200),
                         border_radius=ft.border_radius.all(5),
-                    )
+                    ),
+                    self.edit_button,
                 ],
                 width=200,
                 wrap=True,
@@ -29,7 +33,6 @@ class Item(ft.Container):
             elevation=1,
             data=self.list,
         )
-        self.edit_button = ft.IconButton(ft.Icons.EDIT, on_click=self.edit_card)
         self.view = ft.Draggable(
             group="items",
             content=ft.DragTarget(
@@ -87,11 +90,11 @@ class Item(ft.Container):
             self.store.update_item(self.list.board_list_id, self.item_id, self.item_text)
             self.page.update()
         
-        edit_field = ft.TextField(value=self.item_text)
+        edit_field = ft.TextField(value=self.item_text, on_submit=save_card)
         dialog = ft.AlertDialog(
             title=ft.Text("Edit Card"),
             content=edit_field,
-            actions=[ft.TextButton("Save")]
+            actions=[ft.TextButton("Save", on_click=save_card)]
         )
         self.page.open(dialog)
         
