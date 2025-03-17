@@ -8,7 +8,6 @@ if TYPE_CHECKING:
 
 
 class DataStore:
-
     def add_board(self, model) -> None:
         raise NotImplementedError
 
@@ -64,4 +63,7 @@ class DataStore:
         raise NotImplementedError
 
     def remove_item(self, board_list, id) -> None:
+        raise NotImplementedError
+
+    def update_item(self, board_list, item_id, new_text) -> None:
         raise NotImplementedError

@@ -25,7 +25,11 @@ class Item(ft.Container):
                         content=ft.Checkbox(label=f"{self.item_text}", width=200),
                         border_radius=ft.border_radius.all(5),
                     ),
-                    self.edit_button,
+                    ft.Row([
+                        self.edit_button,
+                        ],
+                        alignment = ft.alignment.center_right,
+                    ),
                 ],
                 width=200,
                 wrap=True,
@@ -85,11 +89,12 @@ class Item(ft.Container):
     def edit_card(self, e):
         def save_card(e):
             self.item_text = edit_field.value
-            self.text_label.value = self.item_text
-            self.page.close(dialog)
+            self.card_item.content.controls[0].label = self.item_text
             self.store.update_item(self.list.board_list_id, self.item_id, self.item_text)
+            # self.list.update_list_item()
+            self.page.close(dialog)
             self.page.update()
-        
+            
         edit_field = ft.TextField(value=self.item_text, on_submit=save_card)
         dialog = ft.AlertDialog(
             title=ft.Text("Edit Card"),
