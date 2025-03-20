@@ -19,18 +19,6 @@ class Item(ft.Container):
         self.edit_button = ft.IconButton(ft.Icons.EDIT, on_click=self.edit_card)
         self.delete_button = ft.IconButton(ft.Icons.DELETE, on_click=self.delete_card)
         
-        # self.tag_dropdown = ft.Dropdown(
-        #     label ="Tags",
-        #     options=[
-        #         ft.dropdown.Option("Urgent"),
-        #         ft.dropdown.Option("In progress"),
-        #         ft.dropdown.Option("Closed"),
-        #     ],
-        #     on_change=lambda e:self.add_tag(e)
-        # )
-        
-        # self.tags_container = ft.IconButton(ft.Icons.TAG_ROUNDED, on_click=self.add_tag)
-        
         self.card_item = ft.Card(
             content=ft.Row(
                         [
@@ -47,7 +35,6 @@ class Item(ft.Container):
                         width=200,
                         wrap=True,
                     ),
-                    # self.tags_container  # Exibição das etiquetas
                     elevation=1,
                     data=self.list,
         )
@@ -102,13 +89,15 @@ class Item(ft.Container):
         
     def edit_card(self, e):
         def save_card(e):
-            new_text = edit_field.value  # Captura o novo texto
+            new_text = edit_field.value  
             if new_text:
                 self.item_text = new_text
                 self.store.update_item(self.list.board_list_id, self.item_id, new_text)
-                checkbox = self.card_item.content.controls[0].content  # Acessa o Checkbox
+                
+                checkbox = self.card_item.content.controls[0].content 
                 if isinstance(checkbox, ft.Checkbox):
                     checkbox.label = new_text
+                    
                 self.page.update()
                 self.page.close(dialog)
                 self.page.update()
@@ -122,9 +111,13 @@ class Item(ft.Container):
         self.page.open(dialog)
         
     def delete_card(self, e):
-        self.list.items.controls.remove(self)
-        self.store.remove_item(self.list.board_list_id, self.item_id)
-        self.page.update()
-    
-
-        
+        for control in self.list.items.controls:
+            if isinstance(control, ft.Column):
+                try:
+                    control.controls.remove(self)
+                    self.list.items.controls.remove(control) 
+                    break
+                except ValueError:
+                    pass  
+        self.store.remove_item(self.list.board_list_id, self.item_id) 
+        self.list.update()
