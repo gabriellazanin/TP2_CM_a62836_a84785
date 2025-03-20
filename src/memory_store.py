@@ -96,12 +96,11 @@ class InMemoryStore(DataStore):
         ]
 
     def remove_item(self, board_list: int, id: int):
-        self.items[board_list] = [
-            i for i in self.items[board_list] if not i.item_id == id
-        ]
-        # self.save_data()
+            self.items[board_list] = [
+                i for i in self.items[board_list] if not i.item_id == id
+            ]
     
-    def update_item(self, board_list, item_id, new_text):
+    def update_item(self, board_list, item_id, new_text, tags=None):
         if board_list in self.items: 
             for item in self.items.get(board_list,[]):
                 if item.item_id == item_id:

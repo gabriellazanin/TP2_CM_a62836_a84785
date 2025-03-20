@@ -10,7 +10,7 @@ from data_store import DataStore
 class Item(ft.Container):
     id_counter = itertools.count()
 
-    def __init__(self, list: "BoardList", store: DataStore, item_text: str):
+    def __init__(self, list: "BoardList", store: DataStore, item_text: str, tags=None):
         self.item_id = next(Item.id_counter)
         self.store: DataStore = store
         self.list = list
@@ -19,25 +19,37 @@ class Item(ft.Container):
         self.edit_button = ft.IconButton(ft.Icons.EDIT, on_click=self.edit_card)
         self.delete_button = ft.IconButton(ft.Icons.DELETE, on_click=self.delete_card)
         
+        # self.tag_dropdown = ft.Dropdown(
+        #     label ="Tags",
+        #     options=[
+        #         ft.dropdown.Option("Urgent"),
+        #         ft.dropdown.Option("In progress"),
+        #         ft.dropdown.Option("Closed"),
+        #     ],
+        #     on_change=lambda e:self.add_tag(e)
+        # )
+        
+        # self.tags_container = ft.IconButton(ft.Icons.TAG_ROUNDED, on_click=self.add_tag)
+        
         self.card_item = ft.Card(
             content=ft.Row(
-                [
-                    ft.Container(
-                        content=ft.Checkbox(label=f"{self.item_text}", width=200),
-                        border_radius=ft.border_radius.all(5),
-                    ),
-                    ft.Row([
-                        self.edit_button,
-                        self.delete_button,
+                        [
+                            ft.Container(
+                                content=ft.Checkbox(label=f"{self.item_text}", width=200),
+                                border_radius=ft.border_radius.all(5),
+                            ),
+                            ft.Row([
+                                self.edit_button,
+                                self.delete_button,
+                            ],
+                            alignment=ft.alignment.center_right),
                         ],
-                        alignment = ft.alignment.center_right,
+                        width=200,
+                        wrap=True,
                     ),
-                ],
-                width=200,
-                wrap=True,
-            ),
-            elevation=1,
-            data=self.list,
+                    # self.tags_container  # Exibição das etiquetas
+                    elevation=1,
+                    data=self.list,
         )
         self.view = ft.Draggable(
             group="items",
@@ -90,13 +102,16 @@ class Item(ft.Container):
         
     def edit_card(self, e):
         def save_card(e):
-            self.item_text = edit_field.value  # Captura o novo texto
-            self.store.update_item(self.list.board_list_id, self.item_id, self.item_text)
-            self.card_item.content.controls[0].label = self.item_text
-
-            self.list.update_list_item()
-            self.page.update()
-            self.page.close(dialog)
+            new_text = edit_field.value  # Captura o novo texto
+            if new_text:
+                self.item_text = new_text
+                self.store.update_item(self.list.board_list_id, self.item_id, new_text)
+                checkbox = self.card_item.content.controls[0].content  # Acessa o Checkbox
+                if isinstance(checkbox, ft.Checkbox):
+                    checkbox.label = new_text
+                self.page.update()
+                self.page.close(dialog)
+                self.page.update()
                     
         edit_field = ft.TextField(value=self.item_text, on_submit=save_card)
         dialog = ft.AlertDialog(
@@ -110,5 +125,6 @@ class Item(ft.Container):
         self.list.items.controls.remove(self)
         self.store.remove_item(self.list.board_list_id, self.item_id)
         self.page.update()
+    
+
         
-            

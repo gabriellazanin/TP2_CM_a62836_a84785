@@ -215,6 +215,7 @@ class BoardList(ft.Container):
         item: str | None = None,
         chosen_control: ft.Draggable | None = None,
         swap_control: ft.Draggable | None = None,
+        # tags: list[str] | None = None  # Adicionado para receber as tags
     ):
 
         controls_list = [x.controls[1] for x in self.items.controls]
@@ -246,16 +247,16 @@ class BoardList(ft.Container):
 
         # insert (drag from other list to middle of this list)
         elif to_index is not None:
-            new_item = Item(self, self.store, item)
+            new_item = Item(self, self.store, item or [])  # Passando as tags
             control_to_add.controls.append(new_item)
             self.items.controls.insert(to_index, control_to_add)
 
         # add new (drag from other list to end of this list, or use add item button)
         else:
             new_item = (
-                Item(self, self.store, item)
+                Item(self, self.store, item or [])  # Passando as tags
                 if item
-                else Item(self, self.store, self.new_item_field.value)
+                else Item(self, self.store, self.new_item_field.value or [])
             )
             control_to_add.controls.append(new_item)
             self.items.controls.append(control_to_add)
@@ -265,7 +266,7 @@ class BoardList(ft.Container):
         self.page.update()
 
     def remove_item(self, item: Item):
-        controls_list = [x.controls[0] for x in self.items.controls]
+        controls_list = [x.controls[1] for x in self.items.controls]
         del self.items.controls[controls_list.index(item)]
         self.store.remove_item(self.board_list_id, item.item_id)
         self.view.update()
@@ -275,8 +276,5 @@ class BoardList(ft.Container):
         self.items.controls[controls_list.index(item)].controls[0].opacity = opacity
         self.view.update()
     
-    def update_list_item(self):
-        # self.remove_item(item_id)
-        for card in self.store.get_items(self.board_list_id):
-            self.items.controls.append(Item(self, self.store, card["text"])) 
-        self.update()
+
+
