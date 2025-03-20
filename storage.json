@@ -1,0 +1,16 @@
+{
+    "lists": [
+        {
+            "id": 0,
+            "title": "sa",
+            "color": "pink300"
+        }
+    ],
+    "cards": [
+        {
+            "id": 0,
+            "text": "oiesss",
+            "list_id": 0
+        }
+    ]
+}

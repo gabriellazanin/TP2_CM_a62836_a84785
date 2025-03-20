@@ -19,27 +19,43 @@ class InMemoryStore(DataStore):
         self.board_lists: dict[int, list["BoardList"]] = {}
         self.items: dict[int, list["Item"]] = {}
         
-        self.load_data() #carregar o arquivo JSON
+        # self.load_data() #carregar o arquivo JSON
 
-    def load_data(self):
-        if os.path.exists(STORAGE_FILE):
-            with open(STORAGE_FILE, "r", encoding="utf-8") as file:
-                data = json.load(file)
-            for list_data in data ["lists"]:
-                self.board_lists[list_data["id"]] = []
-            for card_data in data["cards"]:
-                list_id = card_data["list_id"]
-                if list_id not in self.items:
-                    self.items[list_id] = []
-                self.items[list_id].append(card_data)
+    # def load_data(self):
+    #     """Carrega listas e cartões do JSON ao iniciar"""
+    #     if os.path.exists(STORAGE_FILE):
+    #         with open(STORAGE_FILE, "r", encoding="utf-8") as file:
+    #             data = json.load(file)
+
+    #         # Recarregar listas
+    #         for list_data in data.get("lists", []):
+    #             list_id = list_data["id"]
+    #             self.board_lists[list_id] = []
+
+    #         # Recarregar cartões
+    #         for card_data in data.get("cards", []):
+    #             list_id = card_data["list_id"]
+    #             if list_id not in self.items:
+    #                 self.items[list_id] = []
+    #             self.items[list_id].append(card_data)
+            
+    #         print("DEBUG: Dados carregados do arquivo JSON.")
+    #     else:
+    #         print("DEBUG: Nenhum arquivo JSON encontrado. Criando novo.")
+
                 
     # def save_data(self):
     #     data = {
     #         "lists": [{"id": k, "title": v[0].title, "color": v[0].color} for k, v in self.board_lists.items() if v],
-    #         "cards": [card for sublist in self.items.values() for card in sublist]
+    #         "cards": [
+    #             {"id": card.item_id, "text": card.item_text, "list_id": list_id} 
+    #             for list_id, sublist in self.items.items() for card in sublist
+    #         ]
     #     }
+
     #     with open(STORAGE_FILE, "w", encoding="utf-8") as file:
     #         json.dump(data, file, indent=4)
+
     
 
     def add_board(self, board: "Board"):
@@ -73,7 +89,7 @@ class InMemoryStore(DataStore):
         self.board_lists[board] = [
             l for l in self.board_lists[board] if not l.board_list_id == id
         ]
-        self.save_data()
+        # self.save_data()
 
     def add_user(self, user: "User"):
         self.users[user.name] = user
@@ -96,9 +112,11 @@ class InMemoryStore(DataStore):
         ]
 
     def remove_item(self, board_list: int, id: int):
-            self.items[board_list] = [
-                i for i in self.items[board_list] if not i.item_id == id
-            ]
+        self.items[board_list] = [
+            i for i in self.items[board_list] if not i.item_id == id
+        ]
+        # self.save_data()  
+
     
     def update_item(self, board_list, item_id, new_text, tags=None):
         if board_list in self.items: 
@@ -106,4 +124,4 @@ class InMemoryStore(DataStore):
                 if item.item_id == item_id:
                     item.item_text = new_text
                     break
-        # self.save_data()
+            # self.save_data()
