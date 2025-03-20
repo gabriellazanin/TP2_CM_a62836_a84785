@@ -10,12 +10,11 @@ from data_store import DataStore
 class Item(ft.Container):
     id_counter = itertools.count()
 
-    def __init__(self, list: "BoardList", store: DataStore, item_text: str, tags=None):
+    def __init__(self, list: "BoardList", store: DataStore, item_text: str):
         self.item_id = next(Item.id_counter)
         self.store: DataStore = store
         self.list = list
         self.item_text = item_text
-        
         self.edit_button = ft.IconButton(ft.Icons.EDIT, on_click=self.edit_card)
         self.delete_button = ft.IconButton(ft.Icons.DELETE, on_click=self.delete_card)
         
@@ -89,19 +88,18 @@ class Item(ft.Container):
         
     def edit_card(self, e):
         def save_card(e):
-            new_text = edit_field.value  
+            new_text = edit_field.value
             if new_text:
                 self.item_text = new_text
                 self.store.update_item(self.list.board_list_id, self.item_id, new_text)
                 
                 checkbox = self.card_item.content.controls[0].content 
                 if isinstance(checkbox, ft.Checkbox):
-                    checkbox.label = new_text
+                    checkbox.label = new_text  
                     
                 self.page.update()
                 self.page.close(dialog)
-                self.page.update()
-                    
+                self.page.update()                    
         edit_field = ft.TextField(value=self.item_text, on_submit=save_card)
         dialog = ft.AlertDialog(
             title=ft.Text("Edit Card"),
