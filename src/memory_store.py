@@ -107,7 +107,7 @@ class InMemoryStore(DataStore):
     def get_items(self, board_list: int):
 
         return [
-            {"id": item.item_id, "text": item.item_text, "list_id": board_list}
+            {"id": item.item_id, "text": item.item_text, "list_id": board_list, "labels": item.labels}
             for item in self.items.get(board_list, [])
         ]
 
@@ -118,7 +118,7 @@ class InMemoryStore(DataStore):
         # self.save_data()  
 
     
-    def update_item(self, board_list, item_id, new_text, tags=None):
+    def update_item(self, board_list, item_id, new_text):
         if board_list in self.items: 
             for item in self.items.get(board_list,[]):
                 if item.item_id == item_id:
