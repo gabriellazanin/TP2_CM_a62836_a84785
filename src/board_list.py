@@ -33,7 +33,7 @@ class BoardList(ft.Container):
             bgcolor=ft.Colors.WHITE,
             on_submit=self.add_item_handler,
         )
-
+        
         self.end_indicator = ft.Container(
             bgcolor=ft.Colors.BLACK26,
             border_radius=ft.border_radius.all(30),
@@ -41,7 +41,7 @@ class BoardList(ft.Container):
             width=200,
             opacity=0.0,
         )
-
+        
         self.edit_field = ft.Row(
             [
                 ft.TextField(
@@ -101,7 +101,6 @@ class BoardList(ft.Container):
             ],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
-
         self.inner_list = ft.Container(
             content=ft.Column(
                 [
@@ -275,6 +274,4 @@ class BoardList(ft.Container):
         controls_list = [x.controls[1] for x in self.items.controls]
         self.items.controls[controls_list.index(item)].controls[0].opacity = opacity
         self.view.update()
-    
-
-
+        

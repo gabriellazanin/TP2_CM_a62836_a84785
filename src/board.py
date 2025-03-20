@@ -12,7 +12,7 @@ class Board(ft.Container):
         self.board_id = next(Board.id_counter)
         self.store: DataStore = store
         self.app = app
-        self.name = name
+        self.name = name 
         self.add_list_button = ft.FloatingActionButton(
             icon=ft.Icons.ADD, text="Add a list", height=30, on_click=self.create_list
         )
@@ -149,3 +149,23 @@ class Board(ft.Container):
             alignment=ft.alignment.center,
             data=color,
         )
+        
+    def filter_items(self, e):
+        selected_filter = self.filter_dropdown.value
+
+        color_map = {
+            "Red": ft.Colors.RED_200,
+            "Green": ft.Colors.GREEN_200,
+            "Orange": ft.Colors.AMBER_300,
+            "Purple": ft.Colors.DEEP_PURPLE_200,
+        }
+
+        if selected_filter == "All":
+            for item in self.items.controls:
+                item.visible = True
+        else:
+            selected_color = color_map.get(selected_filter, None)
+            for item in self.items.controls:
+                item.visible = item.color == selected_color
+
+        self.page.update()

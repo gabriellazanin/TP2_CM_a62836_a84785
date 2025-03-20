@@ -118,10 +118,11 @@ class InMemoryStore(DataStore):
         # self.save_data()  
 
     
-    def update_item(self, board_list, item_id, new_text):
+    def update_item(self, board_list, item_id, new_text, labels):
         if board_list in self.items: 
             for item in self.items.get(board_list,[]):
                 if item.item_id == item_id:
                     item.item_text = new_text
+                    item.labels = labels
                     break
             # self.save_data()
