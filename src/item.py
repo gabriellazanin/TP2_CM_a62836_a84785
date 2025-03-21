@@ -138,7 +138,7 @@ class Item(ft.Container):
             "Purple": ft.Colors.DEEP_PURPLE_200,
         }
 
-        selected_color = [ft.Colors.BLUE_500]  # Cor padrão
+        selected_color = [ft.Colors.BLUE_200]  # Cor padrão
 
         def set_color(e):
             selected_color[0] = e.control.data
